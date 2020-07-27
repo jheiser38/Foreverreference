@@ -1,0 +1,38 @@
+{#
+  This page functions as the content for the index (i.e. home page).
+  Note it extends the base.html file from the templates folder.
+#}
+{% extends "base.html" %}
+
+{#
+  This is required to render the forms using thw wtforms module.
+#}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}HeisAPP - Index{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    {#
+      Examples of an if statement.
+      Also, the variable passed to the render_template function (name, known),
+      must be listed in the rendering, as in they dont pull from the app session.
+    #}
+    <h1>
+      Hello,
+      {% if current_user.is_authenticated %}
+        {{ current_user.username }}, your role_id is {{ current_user.role_id }}
+      {% else %}
+        Stranger
+      {% endif %}!
+    </h1>
+
+</div>
+
+{#
+  This is the quick and dirty way to use a form.  Hitting submit will act as
+  the POST method to the current page, and is handled by 'validate_on_submit'
+  in the view function.
+#}
+{{ wtf.quick_form(form) }}
+{% endblock %}

@@ -1,0 +1,241 @@
+################################################################################
+################################################################################
+                     How To Use This Reference and Template
+################################################################################
+################################################################################
+
+1. Purpose of this document:
+  a. The purpose of this document is to describe the layout of this template.
+  b. This guide will highlight how the template is structured, how the files
+    talk to each other, and how to start it up, and modify it for your use.
+
+2. How this template is structured:
+
+  a. Project folder:
+    1. Files:
+      a. config.py - contains configuration data
+      b. NAME.py - this is the script which the flask app is comprised of
+      c. All other subdirectories (discussed below)
+
+    2. Purpose:
+      a. This folder houses the main file (NAME.py), which is where the
+        flask app is run from.
+      b. This is necessary so that proper directory referencing can take
+        place.
+      c. This also has all other subdirectories.
+
+  b. app:
+    1. Files:
+      a. __init__.py - Contains the app factory, and builds the app context
+        1. Has the blueprints, login_manager
+      b. emails.py - This file will ultimately contain the send email functions
+        for consolidated use.
+      c. models - Used for creating database tables.
+        1. Also used for defining functions that will run with the flask-login
+          module, mainly as a method of a current_user who is logged in.
+        2. These include verify password, generate email token, and verify tokens.
+        3. The user permissions are handled here, and controlled in view functions
+          using decorators
+        4. The user table has a gravatar profile picture option, which takes their
+          profile picture if they have one with gravatar, and displays it
+          a. Example of utf-8 encoding, and how gravatar uses it
+        5. Has a table of posts, which are stored as plain text and then converted
+          to rich text (html) using markdown.  This allows posts to have styling.
+      d. decorators.py - This file defines custom decorators (@decorator)
+        1. Used in examples in main.views
+      e. fake.py - used to populate databases for dev/testing
+
+    2. Directories:
+      a. main - houses view functions, errors, and forms
+      b. static - houses static files (images)
+      c. templates - houses the HTML and mail templates
+      d. auth - houses view functions for the authority functions (login,register,etc)
+
+  c. app.main:
+    1. Files:
+      a. __init__.py -
+        1. used to create the blueprint for the view functions
+        2. Assigns variables in the app_context to preclude defining it in templates
+      b. errors.py - incorporated into the blueprint, displays error pages
+        if the error is found
+      c. forms.py - houses all of the forms to be used by the view functions
+        1. Uses pagedown for viewing post previews
+        2. Has forms for admin/users to change profile information
+        3. Has an example of a SelectField for admin editing user roles
+      d. views.py - contains the view functions of the application
+        1. contains the major views for the application (index of all posts, user
+          profile pages, post page, edit profile page, edit post page)
+        2. Also has example functions for:
+          a. dynamic urls
+          b. testing the moment module
+          c. emailing
+          d. using custom decorators
+
+  C app.auth:
+    1. Files:
+      a. __init__.py - used to create the auth blueprint for admin view functions
+      b. forms.py - contains all forms to be used by auth view functions
+        1. These forms are my first to use custom validation functions
+      c. views.py - contains all the view functions by auth urls
+        1. in app.__init__.py, when the auth blueprint is written, all
+          auth.routes have the addition of a /auth to the front.  This was
+          configured this way.
+        2. This is the first use of serialized tokens, and sending via email,
+          but there are several different examples of this
+
+
+  d. app.static:
+    1. Files:
+      a. favicon.ico - THe image that displays at the top in the browser title
+      b. styles.css - custom stylesheet for the app, called in base.html
+        1. As a note, chrome needs to be reset sometimes to remove cookies it
+          only downloads once, this is only for development
+    2. Purpose - houses static files (images, stylehseets) for future use
+
+  e. app.templates:
+    1. Files:
+      a. base.html - this is the base html file which serves as the layout
+      b. old_index.html - this is the page for the old home page, also uses form
+        inputs, html variables, and jinja2 logic statements.  Purely for reference.
+      c. 404.html - error page for error code 404 (file not found)
+      d. 500.html - error page for error code 500 (internal sever error)
+      e. _macros.html - houses macros for the app
+        1. pagination widget for navigating pages
+      f. _posts - shows all the posts its given, used in index and profile pages
+      g. 403.html - error page for forbidden
+      h. edit_post.html - post for editting posts (same form as creating)
+        1. has pagedown included so the pagedown field works properly
+      j. edit_profile - page for editting profiles (form is either user or admin)
+      k. index.html - home page for viewing all posts (uses pagination, pagedown,
+        and rich text)
+      l. post.html - page for viewing a single post (useful for sharing)
+      m. test_moment.html - file for demonstrating use of moment
+      n. user.html - page for viewing a users profile and posts
+    2. Directories:
+      a. mail - houses the mail templates
+      b. auth - houses all templates for view functions in the auth blueprint
+        1. Seperate mail fifrectory within for the associated auth emails
+    3. Purpose:
+      a. This directory is always called on for rendering templates, and
+        is a known location to the flask program.
+
+  f. app.templates.mail:
+    1. Files:
+      a. new_user.html/txt - the html for the subject email
+      b. test.html/txt - email file I use when testing new functions
+
+  F. app.templates.auth:
+    1. Files:
+      a. login.html - page displayed to login the user
+      b. register.html - page shown to register a new user
+      c. unconfirmed.html - page shown to logged in users who havent email confirmed
+      d. profile.html - diaplys the profile attributes with links to change some
+      e. forgot_password.html - allows sending a update password email
+      f. change_password.html - page used to update password when forgotten
+      g. change_password_elective - page used to change users passwords
+      h. change_email.html - form used to change an email address
+
+  FF. app.templates.auth.mail:
+    1. Files:
+      a. confirm_email.html/txt - email sent to confirm an email update
+        1. contains a link which applies the _external=True method to get the
+          absolute url for the link (url_for(.view,_external-True)), so that
+          you can get to it from outside a user session
+      b. confirm_user.html/txt - email sent to confirm a new registered email
+      c. reset_password.html/txt - email sent with a reset password code
+
+  g. migrations:
+    1. Files:
+      a. All files in this directory were automatically generated.
+    2. Use:
+      a. To initialize the migration, from command line:
+        flask db init
+        1. This will create the migration directory
+      b. To create a change to the database:
+        1. Change the models file appropriately
+        2. from cmd line: flask db migrate -m "Upgrade Description"
+        3. Review the script in the migrations/versions directory
+        4. If you do not wish to make the changes permanent:
+          a. flask db downgrade
+            1. This will take the db to its previous state, and any changes will
+          b. Delete the subject migration file, and all changes will have to be
+            written into a new migration file
+        5. To make the change: flask db upgrade
+          a. If the database is already at this change: flask db stamp
+
+  h. tests:
+    1. Files:
+      a. __init__ - no purpose other than to tell python this is a directory
+      b. test_basics.py - contains the tests to perform.  Test files must
+        start with "test" in order to use the unittest test loader as used
+        in NAME.  This function also has some general unittest syntax items.
+        c. test_user_model - tests functions related to user login, registry,
+          permissions, confirmation tokens, etc
+    2. Purpose:
+      a. This directory is referenced by NAME.py as the testing directory,
+        and the test_files and test_functions within are recognized by
+        unittest as the associated files.
+      b. Run in terminal via "flask test"
+
+  i. requirements:
+    1. Files:
+      a. common.txt - all the modules downloaded to the venv for production
+      b. dev.txt - all the modules needed for devlopment, uses common.txt
+
+  j. venv:
+    1. Purpose:
+      a. This houses your virtual environment (venv)
+    2. Usage and notes of virtual environments:
+      a. To create a virtual enviroment:
+        # If you don't have virtual enviroment:
+          sudo apt-get install python3-venv
+        python3 -m venv NAME # usually NAME is venv
+        # this will create the venv folder in your current working directory
+      b. To activate the virtual environment (from project folder, in linux):
+        source venv/bin/activate
+      c. To deactivate in the terminal:
+        deactivate
+      d. To update requirements file:
+        python3 -m pip freeze > requirements.txt # this rewrites the new file
+        # sometimes the python3 -m is unnecessary
+      e. To install the packages in the environment you are in:
+        python3 -m pip install -r requirements.txt
+        # same note applies with the python3 -m
+
+3. How do I get started with it:
+  a. Create your virtual environment, or use the one supplied in the template (2.a.1.i)
+    1. The skeleton repository has a requirements.txt file you can use
+  b. Configure environmental variables in the config.py file (see file for notes)
+    1. Also configure the FLASK_CONFIG environmental (used in NAME.py)
+  c. Create your database structure in the models.py folder
+  d. Create all your databases and migrations (see models.py and 2.g.2)
+    1. Populate the roles table using insert_roles() (see models.py)
+  d. Change all XXXXXX to your desired app name
+  e. You are set up, start putting in view files, forms, and templates
+
+4. How to run it when I'm ready:
+  a. Running from terminal, when in the project folder:
+    source venv/venv/bin/activate # this activates your virtual environment
+    export FLASK_APP=NAME.py # this assigns the flask app
+    flask run # this will run the app
+  b. With the flask app defined, run tests by:
+    flask test
+
+5. Running log changes:
+  a. Added follows to models.py
+  b. Added follow/unfollow to user.html
+  c. url views for follow, unfollow, follwers, and following
+  d. followers.html which shows a table (see html for notes)
+  e. Added a join to get posts of followed people (in main.index)
+  f. Set a cookie in main.index to remember the user preference
+  g. Added comments to the DB
+  h. Added #comments to index.html, which jumps to the post.html but to where
+    id=comments
+  i. Added comment moderation
+  j. Added api interactions
+  k. Testing urls using selenium web crawler (test_selenium)
+  l. Logging queries which take a long time (views.py, and in the production config
+  m. Heroku deployment
+    1. Heroku is a Platform as a service option
+    2. developers push it to herokus git servers, where the app is then installed,
+      upgraded, configuration, adn deployment

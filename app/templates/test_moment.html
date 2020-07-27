@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+<h1>Current time is: {{moment(current_time).format('LLL',refresh=True)}}</h1>
+<br/>
+<h1>That was {{moment(current_time).fromNow(refresh=True)}}</h1>
+
+{% endblock %}

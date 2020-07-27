@@ -1,0 +1,13 @@
+{{user.username}}
+<br/>
+Please confirm your email bye clicking the link below:
+<br/>
+{#
+  The _external=True bit will set the local url on top of http://...
+#}
+{{url_for('auth.confirm',token=token, _external=True)}}
+<br/>
+Thank you,
+Admin
+<br/>
+Note: replies to this email address are not monitored.

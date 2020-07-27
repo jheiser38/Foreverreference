@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% import "_macros.html" as macros %}
+
+{% block title %}
+  HeisAPP - {%if user.name%}{{user.name}}{%else%}{{user.username}}{%endif%}
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+
+    <img class="img-rounded profile-thumbnail" src="{{user.gravatar(size=256)}}">
+    <div class="profile-header">
+        <h1>{{user.username}}</h1>
+        {% if user.name or user.location %}
+            <p>
+                {% if user.name %}{{ user.name }}{% endif %}
+                {% if user.location %}
+                    from <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
+                {% endif %}
+            </p>
+        {% endif %}
+        {% if current_user.is_administrator() %}
+            {# Here is how you pull up mail #}
+            <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+        {% endif %}
+            {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+            <p>Member since {{ moment(user.member_since).format('L') }}.
+                Last seen {{ moment(user.last_seen).fromNow() }}.</p>
+          <p>
+              {# Based on the user's permissions, buttons may display below #}
+              {% if current_user.is_administrator() %}
+                  <a class='btn btn-danger'
+                  href="{{url_for('main.edit_profile_admin',id=user.id)}}">
+                  Edit Profile [Admin]
+                </a>
+              {% endif %}
+              {% if user == current_user %}
+                  <a class='btn btn-default' href="{{url_for('main.edit_profile')}}">
+                    Edit Profile
+                  </a>
+              {% elif current_user.can(Permission.FOLLOW) %}
+                {% if current_user.is_following(user) %}
+                  <a class='btn btn-default' href="{{url_for('main.unfollow',
+                            username=user.username)}}">
+                    Unfollow
+                  </a>
+                {% else %}
+                  <a class='btn btn-default' href="{{url_for('main.follow',
+                            username=user.username)}}">
+                    Follow
+                  </a>
+                {% endif %}
+              {% endif %}
+              <a href="{{url_for('main.followers',username=user.username)}}">
+                {# - 1 because all users follow themselves #}
+                Followers: <span class="badge">{{user.followers.count() - 1}}</span>
+              </a>
+              <a href="{{url_for('main.following',username=user.username)}}">
+                Following: <span class="badge">{{user.followed.count() - 1}}</span>
+              </a>
+              {% if current_user.is_followed(user) and not user == current_user %}
+              |  <span class="label label-default">Follows you</span>
+              {% endif %}
+          </p>
+      </div>
+</div>
+<h3> Posts</h3>
+{% include '_posts.html' %}
+<div class="pagination">
+  {{macros.pagination_widget(pagination,'.index')}}
+</div>
+{% endblock %}

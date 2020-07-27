@@ -1,0 +1,127 @@
+{#
+  This is the layout file which provides the header, format, and styling for all
+  other referencec html files.
+  This html is rendered using the jinja2 engine.
+#}
+
+{#
+  This is how you connect to other html files.  This is just saying that it
+  is using everything about the referenced html file, except where the block
+  content is below.
+#}
+{% extends "bootstrap/base.html" %}
+
+{#
+   Here is the block content, which expands upon the title block of the reference.
+#}
+{% block title %}Title Block Baby{% endblock %}
+
+
+{#
+  This is where the head content goes (stylesheets).  The {{ super() }} allows
+  for using the reference file without completely overwriting it.
+
+  The stylesheet for styles.csas is used here.
+#}
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+{#
+  Navbar things, mostly imported from the bootstrap page/flask book.
+#}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Home ff Home</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                {% if current_user.is_authenticated %}
+                <li>
+                  <a href="{{url_for('main.user',username=current_user.username)}}">
+                    Profile
+                  </a>
+                </li>
+                {% endif %}
+                {% if current_user.can(Permission.MODERATE) %}
+                <li>
+                  <a href="{{url_for('main.moderate')}}">Moderate Comments</a>
+                </li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              {#
+                This current_user is not passed to the render_template function.
+                Flask-Login's _get_user function runs it to get the data.
+              #}
+              {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('auth.change_info') }}">Change Information</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                    </ul>
+                </li>
+              {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+              {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {#
+      Here is an instance of taking backend data to the front.
+      This container applies the styling for an alert, and takes all alerts from
+      when the page is rendered.
+
+      The format {{ python code here }}, is used to show stuff as html text.
+
+      This also has a for loop, which shows the formatting.
+
+      See index.html for if statements.
+
+      As an additional note, this also clears the flash repository of all messages
+    #}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        New Message Yo: {{ message }}
+    </div>
+    {% endfor %}
+
+    {#
+      Here is where the page will actually go.  The block here is within this
+      base.html file vice the bootstrap file.  Note how all other html files
+      extend this base file, and the block is the self named page_content, as
+      shown below
+    #}
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{#
+  This is to include the moment script, which is only used for determining local
+  time for global users.  Notice the super() so that all isn't overwritten.
+  This package was written by the guy who did the book, so its kinda forced.
+#}
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
