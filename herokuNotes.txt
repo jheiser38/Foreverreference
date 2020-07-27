@@ -1,0 +1,7 @@
+Heroku Notes
+
+Steps:
+1. Create a Heroku account
+2. download the heroku CLI (command line interface)
+  a. (https://devcenter.heroku.com/articles/heroku-cli)
+3. login in the command line

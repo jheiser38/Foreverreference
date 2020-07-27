@@ -68,4 +68,10 @@ def create_app(config_name):
 
     # Attach routes and custom error pages here
 
+    # This is to allow for secure HTTP
+    # This intercepts all traffic to the no secure, and puls it into tht secure
+    if app.config['SSL_REDIRECT']:
+        from flask_sslify import SSLify
+        sslify = SSLify(app)
+
     return app

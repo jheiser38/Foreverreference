@@ -39,6 +39,7 @@ class Config:
     SQLALCHEMY_RECORD_QUERIES = True # This is normally disabled if not in DEBUG
                                     # mode, but is more useful in production.
     SLOW_DB_QUERY_TIME = 0.5
+    SSL_REDIRECT = False
     # This is just kind of a placeholder right now
     @staticmethod
     def init_app(app):
@@ -65,6 +66,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL',
         'sqlite:///'+ os.path.join(basedir,'data.sqlite'))
+    SSL_REDIRECT = True
 
     # This is the error logger, which will send an email with the errors it
     #   encounters based on the main.after_app_request view function in main/views
@@ -97,12 +99,40 @@ class ProductionConfig(Config):
         app.logger.addHandler(mail_handler)
 
 
+# This will allow for a new logging handler, which will
+class HerokuConfig(ProductionConfig):
+    SSL_REDIRECT = True if os.environ.get('DYNO') else False
+    # heroku platform supports https, so it is enabled here
+    # Heroku sets this variable in its environment, which will prevent it from
+    #   sabotaging local testing
+
+    @classmethod
+    def init_app(cls,app):
+        ProductionConfig.init_app(app)
+
+        # Handle reverse proxy server headers
+        # Reverse proxy servers handle all requests, and then send them to the
+        #   associated app (how heroku handles things)
+        # My code for user confirmation sends you right to an address, which
+        #   won't jive with the reverse proxyness of heroku.
+        # What this fix inspects requests when they come in, and modify them to work.
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
 # Dictionary which is called in the parent function in __init__.py to return an
 # object which will give all the configuration variables.
 config = {
     'development':DevelopmentConfig(),
     'testing':TestingConfig(),
     'production':ProductionConfig(),
+    'heroku':HerokuConfig(),
 
     'default':DevelopmentConfig()
 }

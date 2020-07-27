@@ -239,3 +239,4 @@
     1. Heroku is a Platform as a service option
     2. developers push it to herokus git servers, where the app is then installed,
       upgraded, configuration, adn deployment
+    3.
