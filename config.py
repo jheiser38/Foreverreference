@@ -23,7 +23,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", 'backup if variable is empty') # Gets either
     APP_ADMIN = os.environ.get("APP_ADMIN","jheiser38@gmail.com")
     MAIL_SERVER = os.environ.get("MAIL_SERVER", 'smtp.googlemail.com') # using because gmail
-    MAIL_PORT = os.environ.get('MAIL_PORT','587')  # must use port 587 eith TLS
+    MAIL_PORT = os.environ.get('MAIL_PORT','25')  # must use port 587 eith TLS
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS','true').lower() in \
         ['true','on','1']       # returns binary if in the list
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'jheiser38.b@gmail.com')
