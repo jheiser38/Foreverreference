@@ -36,7 +36,6 @@ jsonpointer==1.10
 jsonschema==2.6.0
 keyring==10.6.0
 keyrings.alt==3.0
-language-selector==0.1
 Mako==1.1.2
 Markdown==3.2.1
 MarkupSafe==1.1.1
