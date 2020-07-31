@@ -134,7 +134,8 @@ class UnixConfig(ProductionConfig):
         ProductionConfig.init_app(app)
 
         # log to syslog
-        import logging from logging.handlers import SysLogHandler
+        import logging
+        from logging.handlers import SysLogHandler
         syslog_handler = SysLogHandler()
         syslog_handler.setLevel(logging.WARNING)
         app.logger.addHandler(syslog_handler)
