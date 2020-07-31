@@ -11,7 +11,6 @@ colorama==0.3.7
 configobj==5.0.6
 constantly==15.1.0
 coverage==5.1
-cryptography==2.1.4
 dominate==2.4.0
 Faker==4.0.2
 Flask==1.1.2
