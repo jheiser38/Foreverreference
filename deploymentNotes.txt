@@ -1,0 +1,87 @@
+Deploying an app to a linux server using Ubuntu:
+1. Create a server in Linux
+  a. Pretty straight forward.
+2. Get server IP address and ssh into it
+  a. IP address on networking tab on linode
+  b. SSH into the server as root using the linux bash shell
+    1. ssh root@ipaddress
+  c. upgrade the server if new
+    1. apt update && apt upgrade
+  d. set the hostname
+    1. hostnamectl set-hostname DESIREDNAME
+    2. I will be keeping the hostname and linode names the same (all lower)
+  e. Update the hosts file
+    1. nano /etc/hosts
+      a. This will open the host file in nano
+    2. add the server IP address and name below 127.0.0.1 localhost
+    3. ctrl x to save
+  f. Add a new user that does not have root privaledges, but has sudo rights
+    1. adduser DESIREDUSERNAME
+      a. I will keep my linode credentials
+    2. adduser DESIREDUSERNAME sudo
+      a. Now that user is in the sudo group, and has those rights
+  g. logout of root, and login using your username (ssh NAME@IP)
+    1. Don't be worried about the system restart required warning
+  h. set up ssh key based authentication.
+    1. This will allow logging in without a password, and makes life easier
+    2. It is more convenient, and safer since the keys cannot be brute forced
+    3. make a .ssh directory
+      a. Ensure you are in the home directory
+        1. /home/UN or indicated by the ~ in the bash shell
+      b. mkdir .ssh
+      c. Switch to local machine
+      d. ssh-keygen -b 4096
+        1. This will generate a key, and uses some additional security options
+      e. Select the file location where the key will be saved
+      f. enter a passphrase if you desire, it is not required
+      g. You now have an identification, and public key rsa/rsa.pub files
+      h. Move the public key to the server
+        1. If you saved it to your home folder
+          a. cd ~ to access the home folder
+          b. cd /mnt/c to return to where you were
+        2. secure copy the key to the server
+          a. scp id_rsa.pub UN@IP:~/.ssh/authorized_keys
+          b. This will copy the file to the server and place it in its
+            own folder of authorized keys
+          c. provide password when prompted
+        3. Update permissions
+          a. sudo chmod 700 ~/.ssh.
+            1. owner of directory has read, write, and execute
+            2. chmod is how you change permissions
+            3. Permissions are as follows:
+              a. Number represent owner of file/group of directory/everyone else
+              b. 7 is for read/write/execute
+              c. 0 is no permissions
+              d. 6 is read/write
+          b. sudo chmod 600 ~/.ssh/*
+            1. owner of files in the directory has read/write
+    4. Now when you access the server, you will use your ssh key
+  i. Disallow root logins over ssh
+    1. Mainly for security
+    2. sudo nano /etc/ssh/sshd_config
+      a. This opens the ssh configuration file
+    3. change PermitRootLogin no
+      a. hackers will usually go right for root
+    4. change PasswordAuthentication no
+      a. We have ssh keys configured
+      b. hackers can brute force passwords
+    5. sudo systemctl restart sshd
+      a. restarts the ssh service so that changes take
+  j. setup firewall
+    a. sudo apt install ufw
+      1. installs an uncomplicated firewall
+    b. sudo ufw default allow outgoing
+      1. allows outgoing traffic
+    c. sudo ufw default deny incoming
+      1. denies incoming traffic
+      2. THIS CAN LOCK YOU OUT, DO NOT LOG OUT
+    d. sudo ufw allow ssh
+      1. Allows ssh so you can access the server
+    e. sudo ufw allow 5000
+      1. allows traffic on port 5000
+    f. sudo ufw enable
+      1. enables the firewall
+    g. sudo ufw status
+      1. shows status of traffic allowed
+      2. port 22 is ssh
+  k. 

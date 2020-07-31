@@ -239,4 +239,37 @@
     1. Heroku is a Platform as a service option
     2. developers push it to herokus git servers, where the app is then installed,
       upgraded, configuration, adn deployment
-    3.
+    3. Apparently, gmail has a lot of restrictions on using their service for
+      production servers, i.e. restrictions
+  n. Containers:
+    1. I skipped it because the beriosn of windows home that i have does not jive
+  o. Traditional deployment:
+    1. Rent a machine, run it like on your desktop
+    2. Setup step:
+      a. install a database sever like MySQL or Postgres (SQLite not recommended
+        for production).
+      b. install a mail transport agent like Sendmail or Postfix.  Gmail prohibits
+        use with production servers.
+      c. INstall gunicorn as your production ready web server
+      d. Install a process-monitoring utility like supervisor that will retart
+        the server if it crashes or after the host is power cycled.
+      e. Install and configure the SSL to enable secure HTTP
+      f. Optional, but recommended to install a front end proxy service like Apache
+        or nginx.
+        1. This will serve static files firectly and forward application requests
+          into the application server, which is listening on a private port on localhost
+      g. Secure the server (firewall install, remove unused software, etc.)
+      h. To make this all easier, you can use a manual deployment software like
+        Ansible, Chef, or Puppet.
+      i.
+
+6. Outstanding issues:
+  a. Selenium tests do not work (app context is not created)
+  b. Production apps/heroku does not send emails
+  c. I haven't confirmed logging errors is happening on production servers
+  d. I have not created a .env file for environmental variables
+  e. HAve not configured any services for traditional deployment (see 5.o.2 above)
+
+7. Items to look into:
+  a. Using an IDE to speed up development (PyCharm/Visual Studio/PyDev)
+  b. Resources: stackoverflow, reddit.com/r/flask/

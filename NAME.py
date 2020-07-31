@@ -18,8 +18,16 @@ if os.environ.get('FLASK_COVERAGE'):
 
 
 import sys
-
 import click
+
+# This will be used to load environmental variables when the app is created instead
+#   of having to manually configure them upon server initiation.
+# Obviously must be before app creation, since app creation uses env variables.
+from dotenv import load_dotenv # Used for loading environmental vars from a .env file
+
+dotenv_path = os.path.join(os.path.dirname(__file__),'.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 
 
 # from the app folder __init__.py
@@ -115,6 +123,9 @@ def deploy():
     # Ensure all users follow themselves
     User.add_self_follows()
 
+# This is saying if the file directory name
+# if __name__ = '__main__':
+#    app.run(debug=True)
 
 
 # This just shows an example of running flask functions from the terminal

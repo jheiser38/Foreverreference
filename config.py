@@ -23,7 +23,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", 'backup if variable is empty') # Gets either
     APP_ADMIN = os.environ.get("APP_ADMIN","jheiser38@gmail.com")
     MAIL_SERVER = os.environ.get("MAIL_SERVER", 'smtp.googlemail.com') # using because gmail
-    MAIL_PORT = os.environ.get('MAIL_PORT','587')  # must use port 587 with TLS
+    MAIL_PORT = int(os.environ.get('MAIL_PORT','587'))  # must use port 587 with TLS
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS','true').lower() in \
         ['true','on','1']       # returns binary if in the list
     MAIL_USERNAME = 'jheiser38.b@gmail.com'# os.environ.get('MAIL_USERNAME', 'jheiser38.b@gmail.com')
@@ -47,7 +47,7 @@ class Config:
 
 # Invokes the debug option, and also creates a temporary database
 class DevelopmentConfig(Config):
-    DEBUG = True
+    DEBUGs = True
     # This is where the database file location is defined.
     # SQLAlchemy runs a local database, vice online.
     # the filepath is generated using the overall application directory filepath
@@ -125,6 +125,19 @@ class HerokuConfig(ProductionConfig):
         file_handler = StreamHandler()
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
+
+
+# This is the configuration if using a traditional deployment
+class UnixConfig(ProductionConfig):
+    @classmethod
+    def init_app(cls,app):
+        ProductionConfig.init_app(app)
+
+        # log to syslog
+        import logging from logging.handlers import SysLogHandler
+        syslog_handler = SysLogHandler()
+        syslog_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(syslog_handler)
 
 # Dictionary which is called in the parent function in __init__.py to return an
 # object which will give all the configuration variables.

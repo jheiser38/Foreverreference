@@ -33,6 +33,9 @@ pagedown = PageDown() # This will be used as a TextAreaField in the post form
 # This is known as the app factory.
 def create_app(config_name):
     app = Flask(__name__) # creates context
+        # __name__ in python means the name of the module
+        # __name__ will be __main__ if run directly from "python3 NAME.py" instead
+        #   of "flask run"
     app.config.from_object(config[config_name]) # applies all object shit to config
     #config[config_name].init_app(app) # matters if you have a function defined
 

@@ -1,1 +1,2 @@
 -r common.txt
+python-dotenv==0.14.0
