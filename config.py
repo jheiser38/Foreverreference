@@ -48,7 +48,7 @@ class Config:
 
 # Invokes the debug option, and also creates a temporary database
 class DevelopmentConfig(Config):
-    debug = True
+    DEBUG = True
     YOUR_IN_DEV = True
     # This is where the database file location is defined.
     # SQLAlchemy runs a local database, vice online.
