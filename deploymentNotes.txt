@@ -95,3 +95,13 @@ Deploying an app to a linux server using Ubuntu:
     5. python3 -m pip install -r requirements.txt
       a. I install the production environment requirements package
         since the server will be a production server
+  m. Upload your environmental variables
+    1. sudo touch /etc/config.json
+      a. This creates a new file where environmental variables can be saved
+    2. sudo nano /etc/config.json
+      a. Make a dictionary of all the environmental variables by
+      {
+        "VARIABLENAME":"VALUE",
+      }
+    3. He then changes his configuration file to load in the json
+  n. Run the app using flask run --host=0.0.0.0

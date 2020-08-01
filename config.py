@@ -41,13 +41,15 @@ class Config:
     SLOW_DB_QUERY_TIME = 0.5
     SSL_REDIRECT = False
     # This is just kind of a placeholder right now
+    YOUR_IN_DEV,YOUR_IN_TEST,YOUR_IN_PROD = False
     @staticmethod
     def init_app(app):
         pass
 
 # Invokes the debug option, and also creates a temporary database
 class DevelopmentConfig(Config):
-    DEBUGs = True
+    debug = True
+    YOUR_IN_DEV = True
     # This is where the database file location is defined.
     # SQLAlchemy runs a local database, vice online.
     # the filepath is generated using the overall application directory filepath
@@ -57,6 +59,7 @@ class DevelopmentConfig(Config):
 # Creates a testing database to maintain data
 class TestingConfig(Config):
     TESTING = True
+    YOUR_IN_TEST=True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL',
         'sqlite://')        # stored in memory because theres not need to keep it
     WTF_CSRF_ENABLED = False # all wtforms have this csrf, which is easier to
@@ -67,7 +70,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL',
         'sqlite:///'+ os.path.join(basedir,'data.sqlite'))
     SSL_REDIRECT = True
-
+    YOUR_IN_PROD=True
     # This is the error logger, which will send an email with the errors it
     #   encounters based on the main.after_app_request view function in main/views
     @classmethod
