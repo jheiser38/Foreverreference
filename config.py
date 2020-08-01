@@ -41,7 +41,7 @@ class Config:
     SLOW_DB_QUERY_TIME = 0.5
     SSL_REDIRECT = False
     # This is just kind of a placeholder right now
-    YOUR_IN_DEV,YOUR_IN_TEST,YOUR_IN_PROD = False
+    YOUR_IN_DEV,YOUR_IN_TEST,YOUR_IN_PROD = False,False,False
     @staticmethod
     def init_app(app):
         pass
